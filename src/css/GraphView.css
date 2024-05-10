@@ -1,0 +1,123 @@
+/* Tree Node */
+.outer-wrapper {
+    margin-top: 40px;
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.options-header {
+    font-size: 25px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.inner-buttons {
+    width: 20%;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.attributes {
+    margin-bottom: 30px;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+}
+
+.wrapper-tree{
+    border: 3px darkgray solid;
+    float: right;
+    border-radius: 10px;
+}
+
+.slider-option {
+    margin-bottom:25px;
+    width: 100%;
+    height: 30px;
+    font-size: 20px;
+}
+
+.slider-values {
+    display: flex;
+    flex-direction: row;
+    height: inherit;
+}
+
+.slider-value {
+    min-width: fit-content;
+    margin-left: 15px;
+    margin-right: 15px;
+    font-size: 25px;
+    margin-bottom: 10px;
+    padding-bottom: 20px;
+}
+
+.node__root > circle {
+    fill: black;
+}
+
+.node__branch > circle {
+    fill: black;
+}
+
+.node__leaf > circle {
+    fill: rgb(67, 170, 139);
+    r: 40;
+}
+
+.graph-buttons {
+    font-size: 20px;
+    font-weight: 500;
+    margin-right: 15px;
+    padding: 10px;
+    text-align: center;
+    margin-left:20px;
+    margin-right: 40px;
+    margin-bottom: 20px ;
+    border: 0px;
+    background-color: rgb(67, 170, 139);
+    color: white;
+    border-radius: 5px;
+}
+
+.graph-buttons:hover {
+    background-color: rgb(126, 108, 108);
+}
+
+.graph-buttons:focus {
+    background-color: rgb(226, 218, 219);
+    color: black;
+}
+
+
+.custom-slider {
+    min-width: 40%;
+    align-self: center;
+}
+
+.custom-slider .rc-slider-handle {
+    background-color: black;
+    border-color: black;
+}
+
+.custom-slider .rc-slider-track {
+    background-color: black;
+}
+
+.custom-slider .rc-slider-rail {
+    background-color: black;
+}
+
+.custom-slider .rc-slider-step {
+    background-color: black;
+}
