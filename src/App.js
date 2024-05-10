@@ -1,23 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
+import './css/App.css';
+import GraphView from './GraphView';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <div className="outer-display">
+      <header className="title-header">
+        Minimax & Alpha Beta Pruning
       </header>
+      <div className="bio">
+        A view to see Minimax and  Alpha-Beta Pruning
+      </div>
+      <div className="graph">
+        <GraphView></GraphView>
+      </div>
     </div>
   );
 }
