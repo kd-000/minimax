@@ -1,5 +1,5 @@
 import './css/App.css';
-import GraphView from './GraphView';
+import GraphView from './components/GraphView';
 
 function App() {
   return (
