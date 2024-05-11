@@ -1,0 +1,18 @@
+.banner-outer {
+    position: absolute;
+    top:0px;
+    right:0px;
+    margin: 20px;
+    width: fit-content;
+}
+
+
+.icon {
+    width: 50px;
+    transition: transform 0.3s ease;
+}
+
+/* Define the styles for the icon when hovered */
+.icon:hover {
+    transform: scale(1.1); /* Scale the icon by 10% and translate it up by 5 pixels */
+}
