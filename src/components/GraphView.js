@@ -228,8 +228,13 @@ const GraphView = () => {
     }, []);
 
     const handleNodeValueChange = (event, nodeId) => {
-        const newValue = parseInt(event.target.value); // Convert input value to integer
+        let newValue = parseInt(event.target.value); // Convert input value to integer
         if (!isNaN(newValue)) { // Check if the input is a valid integer
+            if (newValue > 100) {
+                newValue = 100;
+            } else if (newValue < -100) {
+                newValue = -100;
+            }
             const updatedTreeData = JSON.parse(JSON.stringify(treeData));
                 // Find the node with the given ID and update its name attribute
                 const updateNodeValue = (node) => {
@@ -278,7 +283,8 @@ const GraphView = () => {
                             type="number"
                             value={nodeDatum.name !== null ? nodeDatum.name : ''}
                             onChange={(event) => handleNodeValueChange(event, nodeDatum.id)}
-                            className="input-style"/> : 
+                            className="input-style"
+                            min="-100" max="100"/> : 
                         <h3 style={{width: '100%', textAlign: "left", margin: '0px' }}> {nodeDatum.name} <div style={{fontStyle: 'italic', fontSize: "calc(100% - 2px)"}}>{!nodeDatum.isClicked && nodeDatum.attributes && nodeDatum.attributes.player !== '' ? nodeDatum.attributes.player : null}</div>
                         </h3>}
                     
