@@ -34,6 +34,31 @@
     width: 100%;
 }
 
+.in-node-buttons {
+    width: 100%;
+    margin-bottom: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.input-style {
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size:18px;
+    color: #555;
+    outline: none;
+    width:50%;
+  }
+  
+  .input-style:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+  
+
 .wrapper-tree{
     border: 3px darkgray solid;
     float: right;
@@ -62,8 +87,12 @@
     padding-bottom: 20px;
 }
 
-.node__root > circle {
-    fill: black;
+.node__notpruned {
+    fill: rgb(67, 170, 139) !important;
+}
+
+.node__root> circle {
+    fill: rgb(67, 170, 139) !important;
 }
 
 .node__branch > circle {
@@ -71,33 +100,66 @@
 }
 
 .node__leaf > circle {
-    fill: rgb(67, 170, 139);
+    fill: rgb(67, 170, 139) !important;
     r: 40;
 }
 
+.node__pruned {
+    fill: rgb(199, 0, 57) !important; /* Change the fill color for pruned nodes */
+}
+
+.pruned-path {
+    stroke: rgb(199, 0, 57) !important; /* Set the stroke color for pruned paths */
+    stroke-width: 3px; 
+    stroke-dasharray: 5;
+}
+
+.normal-path {
+    stroke: black !important; /* Set the stroke color for normal paths */
+    stroke-width: 2px; 
+}
+
 .graph-buttons {
-    font-size: 20px;
-    font-weight: 500;
-    margin-right: 15px;
-    padding: 10px;
-    text-align: center;
-    margin-left:20px;
-    margin-right: 40px;
-    margin-bottom: 20px ;
-    border: 0px;
+    appearance: none;
     background-color: rgb(67, 170, 139);
+    font-size: 20px;
+    border: 1px solid rgba(27, 31, 35, .15);
+    border-radius: 6px;
+    box-shadow: rgba(27, 31, 35, .1) 0 1px 0;
+    box-sizing: border-box;
     color: white;
-    border-radius: 5px;
-}
+    cursor: pointer;
+    font-weight: 600;
+    line-height: 20px;
+    text-align: center;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: middle;
+    margin: 10px;
+    margin-right: 25px;
+    padding: 12px;
+  }
+  
+  .graph-buttons:focus:not(:focus-visible):not(.focus-visible) {
+    box-shadow: none;
+    outline: none;
+  }
+  
+  .graph-buttons:hover {
+    background-color: rgb(0, 117, 89);
+  }
+  
+  .graph-buttons:focus {
+    box-shadow: rgba(46, 164, 79, .4) 0 0 0 3px;
+    outline: none;
+  }
+  
 
-.graph-buttons:hover {
-    background-color: rgb(126, 108, 108);
-}
-
-.graph-buttons:focus {
-    background-color: rgb(226, 218, 219);
+  .graph-buttons:active {
+    background-color: rgb(125, 226, 192);
     color: black;
-}
+  }
 
 
 .custom-slider {
