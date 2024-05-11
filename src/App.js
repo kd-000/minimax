@@ -1,5 +1,6 @@
 import './css/App.css';
 import GraphView from './components/GraphView';
+import Banner from './components/banner'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <div className="graph">
         <GraphView></GraphView>
       </div>
+      <Banner></Banner>
     </div>
   );
 }
