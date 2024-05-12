@@ -118,17 +118,17 @@
 }
 
 .node__pruned {
-    fill: rgb(199, 0, 57) !important; /* Change the fill color for pruned nodes */
+    fill: rgb(199, 0, 57) !important; 
 }
 
 .pruned-path {
-    stroke: rgb(199, 0, 57) !important; /* Set the stroke color for pruned paths */
+    stroke: rgb(199, 0, 57) !important;
     stroke-width: 3px; 
     stroke-dasharray: 5;
 }
 
 .normal-path {
-    stroke: black !important; /* Set the stroke color for normal paths */
+    stroke: black !important;
     stroke-width: 2px; 
 }
 
