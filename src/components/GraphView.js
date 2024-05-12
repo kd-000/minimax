@@ -9,7 +9,7 @@ const GraphView = () => {
     const [minValue,setMinValue] = useState(-20)
     const [maxValue,setMaxValue] = useState(20)
     const [branch,setBranch] = useState(2)
-    const nodeSize = {x: 100, y:120};
+    const nodeSize = {x: 110, y:120};
     const [usedIds, setUsedIds] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
     const foreignObjectProps = { width: nodeSize.x, height: nodeSize.y, x:20, y: -10 };
@@ -85,31 +85,56 @@ const GraphView = () => {
         return generateNode(0, "max"); 
     };
 
-    // const Minimax = (node, maximising) => {
-    //     if (!node.children || node.children.length === 0) {
-    //         //If node is a leaf node, calculate and store Minimax value
-    //         node.name = node.name;
-    //         return node.name;
-    //     }
+    const updateAlphaBetaAttributes = (node) => {
+        // Set alpha and beta attributes to an empty string
+        if (node.attributes) {
+            node.attributes.alpha = null;
+            node.attributes.beta = null;
+        }
     
-    //     if (maximising) {
-    //         let maxValue = -101 ;
-    //         for (let child of node.children) {
-    //             const value = Minimax(child, false);
-    //             maxValue = Math.max(maxValue, value);
-    //         }
-    //         node.name = maxValue;
-    //         return maxValue;
-    //     } else {
-    //         let minValue = 101;
-    //         for (let child of node.children) {
-    //             const value = Minimax(child, true);
-    //             minValue = Math.min(minValue, value);
-    //         }
-    //         node.name = minValue;
-    //         return minValue;
-    //     }
-    // };
+        // If the current node has children, recursively update their attributes
+        if (node.children) {
+            node.children.forEach(child => updateAlphaBetaAttributes(child));
+        }
+    };
+    
+
+    const Minimax = (node, maximising) => {
+        if (!node.children || node.children.length === 0) {
+            //If node is a leaf node, calculate and store Minimax value
+            node.name = node.name;
+            return node.name;
+        }
+    
+        if (maximising) {
+            let maxValue = -101 ;
+            for (let child of node.children) {
+                const value = Minimax(child, false);
+                maxValue = Math.max(maxValue, value);
+            }
+            node.name = maxValue;
+            return maxValue;
+        } else {
+            let minValue = 101;
+            for (let child of node.children) {
+                const value = Minimax(child, true);
+                minValue = Math.min(minValue, value);
+            }
+            node.name = minValue;
+            return minValue;
+        }
+    };
+
+    const cleanNodeNames = (node) => {
+        // If the node is a leaf node, set its name to null
+        if (!node.children || node.children.length === 0) {
+            return;
+        } else {
+            // If the node has children, recursively traverse the children and update their names
+            node.name = null;
+            node.children.forEach(child => cleanNodeNames(child));
+        }
+    };
     
     const AlphaBetaPrune = (node, alpha, beta, maximising) => {
         if (!node.children || node.children.length === 0) {
@@ -204,16 +229,20 @@ const GraphView = () => {
     };
     
 
-    // const handleMinimax = () => {
-    //     const clonedTreeData = JSON.parse(JSON.stringify(treeData));
-    //     Minimax(clonedTreeData, true); 
-    //     resetIsClicked(clonedTreeData);
-    //     setTreeData(clonedTreeData);
-    // }
+    const handleMinimax = () => {
+        setIsPruned(false)
+        const clonedTreeData = JSON.parse(JSON.stringify(treeData));
+        Minimax(clonedTreeData, true); 
+        updateAlphaBetaAttributes(clonedTreeData);
+        resetPrunedNodes(clonedTreeData)
+        resetIsClicked(clonedTreeData);
+        setTreeData(clonedTreeData);
+    }
 
     const handleAlphaBeta = () => {
         setIsPruned(false)
         const clonedTreeData = JSON.parse(JSON.stringify(treeData)); 
+        cleanNodeNames(clonedTreeData)
         AlphaBetaPrune(clonedTreeData, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, true); 
         setTreeData(clonedTreeData);
         resetIsClicked(clonedTreeData);
@@ -271,7 +300,11 @@ const GraphView = () => {
                 <div
                     style={{
                         backgroundColor: nodeDatum.name !== null && nodeDatum.attributes ? " #d7dbdd" : "transparent",
-                        padding: nodeDatum.name !== null && nodeDatum.attributes ? "4px " : "0px",
+                        paddingTop: nodeDatum.name !== null && nodeDatum.attributes ? "8px " : "0px",
+                        paddingRight: nodeDatum.name !== null && nodeDatum.attributes ? "8px " : "0px",
+                        paddingBottom: nodeDatum.name !== null && nodeDatum.attributes ? "8px " : "0px",
+                        width: nodeDatum.name !== null && nodeDatum.attributes && !nodeDatum.attributes.alpha ? "fit-content " : "unset",
+                        paddingLeft: nodeDatum.name !== null && nodeDatum.attributes ? "8px" : "unset",
                         border: nodeDatum.name !== null && nodeDatum.attributes ? "2px white solid" : "0px",
                         display: "flex",
                         justifyContent: "center",
@@ -289,9 +322,8 @@ const GraphView = () => {
                         </h3>}
                     
                     
-                    {!nodeDatum.isClicked && ( <p style={{textAlign: "left", margin: '0px', marginLeft: '3px', fontSize: '15px', fontWeight: '600', color: '#555'}}>
-                        {nodeDatum.attributes && nodeDatum.attributes.alpha !== null && nodeDatum.attributes.alpha !== '' ? `α : ${nodeDatum.attributes.alpha}` : ''}
-                        <br/>
+                    {!nodeDatum.isClicked && ( <p style={{textAlign: "left", margin: '0px', marginLeft: '3px', fontSize: '15px', fontWeight: '600', color: '#555', height: nodeDatum.name !== null && (!nodeDatum.attributes || (nodeDatum.attributes && !nodeDatum.attributes.alpha)) ? "0px " : "unset",}}>
+                        {nodeDatum.attributes && nodeDatum.attributes.alpha !== null && nodeDatum.attributes.alpha !== '' ? `α : ${nodeDatum.attributes.alpha}` : ''}<br/>
                         {nodeDatum.attributes && nodeDatum.attributes.alpha !== null && nodeDatum.attributes.beta !== '' ? `β : ${nodeDatum.attributes.beta}` : ''}
                     </p>)}
                     {/* Conditionally render buttons when the node is clicked */}
@@ -457,11 +489,10 @@ const GraphView = () => {
         <div className="outer-wrapper">
             
             <div className="inner-buttons">
-            <div className="options-header">
+                <div className='attributes'>
+                <div className="options-header">
                     Options
                 </div>
-                
-                <div className='attributes'>
                     <div className='slider-option'>
                         Branch
                         <div className="slider-values">
@@ -512,14 +543,18 @@ const GraphView = () => {
                             </div>
                         </div>
                     </div>
+                    <div className='buttons'>
+                        <button className="graph-buttons" onClick={regenerateTree}>Regenerate Tree</button> 
+                    </div>
                 </div>
-                <div className='buttons'>
-                    <button className="graph-buttons" onClick={regenerateTree}>Regenerate Tree</button> 
-                    <button className="graph-buttons" onClick={regenerateValues}>Regenerate Values</button> 
-                    {/* <button className="graph-buttons" onClick={handleMinimax}>Minimax</button> */}
-                    <button className="graph-buttons" onClick={handleAlphaBeta}>Alpha Beta Pruning</button>
+                <div className='attributes'>
+                    <div className='buttons'>
+                        <button className="graph-buttons" onClick={regenerateValues}>Regenerate Values</button> 
+                        <button className="graph-buttons" onClick={handleMinimax}>Minimax</button>
+                        <button className="graph-buttons" onClick={handleAlphaBeta}>Alpha Beta Pruning</button>
+                    </div>
                 </div>
-                {isPruned && <div>Your tree has had nodes been pruned!</div>} 
+                {isPruned && <div style={{paddingLeft:'20px', paddingRight:'20px', paddingBottom:'20px', paddingTop:'0px !important', fontSize:'20px'}}>Your tree has had nodes pruned!</div>} 
 
             </div>
 
