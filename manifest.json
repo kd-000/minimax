@@ -1,0 +1,15 @@
+{
+  "short_name": "Minimax & Alpha Beta Pruning",
+  "name": "Minimax & Alpha Beta Pruning - kd-000",
+  "icons": [
+    {
+      "src": "github-mark.svg",
+      "type": "image/svg",
+      "sizes": "98x96"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
