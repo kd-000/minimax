@@ -6,15 +6,8 @@ import 'rc-slider/assets/index.css';
 
 const GraphView = () => {
 
-    const [minValue,setMinValue] = useState(-20)
-    const [maxValue,setMaxValue] = useState(20)
-    const [branch,setBranch] = useState(2)
-    const nodeSize = {x: 110, y:120};
-    const [usedIds, setUsedIds] = useState([]);
-    const [selectedId, setSelectedId] = useState(null);
-    const foreignObjectProps = { width: nodeSize.x, height: nodeSize.y, x:20, y: -10 };
-    const [depth,setDepth] = useState(2)
-    const [isPruned, setIsPruned] = useState(false)
+    // <Tree>
+    const intialStart = {x: 750, y:100};
     const [treeData, setTreeData] = useState(
         {
             id: 0,
@@ -30,6 +23,21 @@ const GraphView = () => {
         }
     )
 
+    // Foreign
+    const nodeSize = {x: 110, y:120};
+    const foreignObjectProps = {width: nodeSize.x, height: nodeSize.y, x:20, y: -10};
+    
+    // Flag for text bos
+    const [isPruned, setIsPruned] = useState(false)
+
+
+    // Options Variables
+    const [minValue,setMinValue] = useState(-20)
+    const [maxValue,setMaxValue] = useState(20)
+    const [branch,setBranch] = useState(2)
+    const [depth,setDepth] = useState(2)
+
+    // Handles for Option variables
     const handleBranchChange = (newValue) => {
         setBranch(newValue);
     };
@@ -44,31 +52,38 @@ const GraphView = () => {
     }
 
     const generateRandomId = () => {
-        // Function to generate a random string of characters as ID
+        // Function to generate a random string as a ID
         return Math.random().toString(36).substr(2, 9); // 9 characters long
     };
 
+    // Tracker of usedIds so there's no duplicate
+    const [usedIds, setUsedIds] = useState([]);
+
+    // Generate unique ID
     const generateId = () => {
-        // Generate unique ID for each node
         let id;
         do {
             id = generateRandomId();
-        } while (usedIds.includes(id));
-        setUsedIds([...usedIds, id]);
+        } while (usedIds.includes(id)); // Finds a unique ID
+        setUsedIds([...usedIds, id]); 
         return id;
     };
 
+
     const generateRandomData = () => {
         const generateNode = (currentDepth, currentPlayer) => {
+
+            // Generate New Node
             const node = {};
             node.id = generateId();
             node.isClicked = false;
             node.pruned = false;
             node.depth = currentDepth;
+
+            // If a Leaf Node add a value
             if (currentDepth === depth || (currentDepth === 0 && depth === 0)) {
-                //If current depth is equal to the desired depth or depth is 0, set name and player attribute
                 node.name = Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
-            } else {
+            } else { //Otherwise add children and repeat
                 const nextPlayer = currentPlayer === "max" ? "min" : "max"; //Alternate player attribute
                 node.name= null;
                 node.children = Array.from({ length: branch }, () => generateNode(currentDepth + 1, nextPlayer));
@@ -82,17 +97,22 @@ const GraphView = () => {
             return node;
         };
     
-        return generateNode(0, "max"); 
+        return generateNode(0, "max"); // Trigger
     };
 
+    // Button trigger
+    const regenerateTree = () => {
+        setTreeData(generateRandomData());
+    }
+
+    // Sets all alpha/beta attributes to null in a tree
     const updateAlphaBetaAttributes = (node) => {
-        // Set alpha and beta attributes to an empty string
         if (node.attributes) {
             node.attributes.alpha = null;
             node.attributes.beta = null;
         }
     
-        // If the current node has children, recursively update their attributes
+        // If the current node has children, trigger function for them
         if (node.children) {
             node.children.forEach(child => updateAlphaBetaAttributes(child));
         }
@@ -100,14 +120,13 @@ const GraphView = () => {
     
 
     const Minimax = (node, maximising) => {
-        if (!node.children || node.children.length === 0) {
-            //If node is a leaf node, calculate and store Minimax value
-            node.name = node.name;
+        // If a Leaf Node return the value
+        if (!node.children || node.children.length === 0) { 
             return node.name;
         }
-    
+        
         if (maximising) {
-            let maxValue = -101 ;
+            let maxValue = -101;
             for (let child of node.children) {
                 const value = Minimax(child, false);
                 maxValue = Math.max(maxValue, value);
@@ -125,92 +144,100 @@ const GraphView = () => {
         }
     };
 
+    // Clean tree of values apart from leaf nodes
     const cleanNodeNames = (node) => {
-        // If the node is a leaf node, set its name to null
+        // If leaf node do nothing
         if (!node.children || node.children.length === 0) {
             return;
         } else {
-            // If the node has children, recursively traverse the children and update their names
+            // If not, clean names & trigger function for children
             node.name = null;
             node.children.forEach(child => cleanNodeNames(child));
         }
     };
     
     const AlphaBetaPrune = (node, alpha, beta, maximising) => {
+        // If leaf node return
         if (!node.children || node.children.length === 0) {
-            //If node is a leaf node, calculate and store the value
-            node.name = node.name;
             return node.name;
         }
     
         if (maximising) {
             let maxValue = Number.NEGATIVE_INFINITY;
+
+            // For each child, trigger function
             for (let i = 0; i < node.children.length; i++) {
                 const child = node.children[i];
                 const value = AlphaBetaPrune(child, alpha, beta, false);
                 maxValue = Math.max(maxValue, value);
-                alpha = Math.max(alpha, value); //Update alpha value
+                alpha = Math.max(alpha, value); // Update alpha value
+
+                // Prune the remaining nodes
                 if (beta <= alpha) {
-                    //Prune the remaining nodes
                     for (let j = i + 1; j < node.children.length; j++) {
-                        setIsPruned(true)
-                        markPruned(node.children[j]); // Mark each remaining node as pruned
+                        setIsPruned(true) // Trigger text div
+                        markPruned(node.children[j]); // Mark node and below as pruned
                     }
                     
                     break;
                 }
             }
             node.name = maxValue;
-            node.attributes.alpha = alpha; // pdate alpha value for the node
-            node.attributes.beta = beta; //Update beta value for the node
+            node.attributes.alpha = alpha; // Update alpha value for the node
+            node.attributes.beta = beta; // Update beta value for the node
             return maxValue;
         } else {
             let minValue = Number.POSITIVE_INFINITY;
+
+            // For each child, trigger function
             for (let i = 0; i < node.children.length; i++) {
                 const child = node.children[i];
                 const value = AlphaBetaPrune(child, alpha, beta, true);
                 minValue = Math.min(minValue, value);
                 beta = Math.min(beta, value); //Update beta value
+
+                //Prune the remaining nodes
                 if (beta <= alpha) {
-                    //Prune the remaining nodes
                     for (let j = i + 1; j < node.children.length; j++) {
-                        setIsPruned(true)
-                        markPruned(node.children[j]); // Mark each remaining node as pruned
+                        setIsPruned(true) // Trigger text div
+                        markPruned(node.children[j]); // Mark node and below as pruned
                     }                    
                     break;
                 }
             }
             node.name = minValue;
-            node.attributes.alpha = alpha; //Update alpha value for the node
-            node.attributes.beta = beta; //Update beta value for the node
+            node.attributes.alpha = alpha; // Update alpha value for the node
+            node.attributes.beta = beta; // Update beta value for the node
             return minValue;
         }
     };
     
-    
+    // Mark node and all children below as prunes
     const markPruned = (node) => {
-        node.pruned = true; // Mark current node as pruned
-        // Recursively mark all descendant nodes as pruned
+        node.pruned = true; 
+        
+        // Stop if leaf
         if (!node.children || node.children.length === 0) {
-            return; // If node is a leaf, no need to mark children
+            return; 
         }
+
+        // Triggers function on children
         node.children.forEach(child => markPruned(child));
     };
 
 
-    const regenerateTree = () => {
-        setTreeData(generateRandomData());
-    }
 
     const regenerateValues = () => {
-        // Function to recursively update the values of nodes in the tree
+        setIsPruned(false) // Reset text div
+
         const updateNodeValues = (node) => {
+            
+             // If leaf, redo value
             if (!node.children || node.children.length === 0) {
-                // If node is a leaf node, generate a random value within the specified range
                 node.name = Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
                 node.pruned = false;
             } else {
-                // If node has children, recursively update their values
+                // If node has children, trigger function
                 node.name = null;
                 node.pruned = false;
                 node.attributes.alpha = null;
@@ -219,16 +246,13 @@ const GraphView = () => {
             }
         };
     
-        // Clone the tree data
         const updatedTreeData = JSON.parse(JSON.stringify(treeData));
-        // Update the values of nodes
         updateNodeValues(updatedTreeData);
-        // Set the state with the updated tree data
         resetIsClicked(updatedTreeData);
         setTreeData(updatedTreeData);
     };
     
-
+    // Button trigger
     const handleMinimax = () => {
         setIsPruned(false)
         const clonedTreeData = JSON.parse(JSON.stringify(treeData));
@@ -239,6 +263,7 @@ const GraphView = () => {
         setTreeData(clonedTreeData);
     }
 
+    // Button trigger
     const handleAlphaBeta = () => {
         setIsPruned(false)
         const clonedTreeData = JSON.parse(JSON.stringify(treeData)); 
@@ -248,23 +273,23 @@ const GraphView = () => {
         resetIsClicked(clonedTreeData);
     }
 
+    // Initial tree when starting up
     useEffect(() => {
         regenerateTree();
     }, [minValue, maxValue, branch, depth])
 
-    useEffect(() => {
-        regenerateTree(-20,20,2,3);
-    }, []);
-
+    // Editing a node
     const handleNodeValueChange = (event, nodeId) => {
-        let newValue = parseInt(event.target.value); // Convert input value to integer
-        if (!isNaN(newValue)) { // Check if the input is a valid integer
+        let newValue = parseInt(event.target.value);
+        if (!isNaN(newValue)) {
+            // Checks value is within bounds
             if (newValue > 100) {
                 newValue = 100;
             } else if (newValue < -100) {
                 newValue = -100;
             }
             const updatedTreeData = JSON.parse(JSON.stringify(treeData));
+
                 // Find the node with the given ID and update its name attribute
                 const updateNodeValue = (node) => {
                     if (node.id === nodeId) {
@@ -277,6 +302,7 @@ const GraphView = () => {
                         node.children.forEach(child => updateNodeValue(child));
                     }
                 };
+
                 updateNodeValue(updatedTreeData);            
                 resetPrunedNodes(updatedTreeData)
                 setTreeData(updatedTreeData);
@@ -285,7 +311,6 @@ const GraphView = () => {
         } else {
             // Handle invalid input (non-integer)
             console.error("Invalid input: Please enter an integer value.");
-            // You can add further logic here, such as displaying an error message to the user
         }
     };
 
@@ -343,12 +368,6 @@ const GraphView = () => {
             const updatedTreeData = { ...prevTreeData };
             
             // Reset isClicked attribute for all nodes
-            const resetIsClicked = (node) => {
-                node.isClicked = false;
-                if (node.children) {
-                    node.children.forEach(child => resetIsClicked(child));
-                }
-            };
             resetIsClicked(updatedTreeData);
     
             // Find the node with the given ID and set its isClicked attribute
@@ -366,25 +385,22 @@ const GraphView = () => {
         });
     };
 
+    // Reset isClicked attribute for all nodes
     const resetIsClicked = (node) => {
-        // Set the isClicked attribute of the current node to false
         node.isClicked = false;
-    
-        // If the current node has children, recursively call resetIsClicked on each child
         if (node.children) {
             node.children.forEach(child => resetIsClicked(child));
         }
     };    
     
+    // Reset pruned attribute for all nodes
     const resetPrunedNodes = (node) => {
-        // Set the pruned property of the current node to false
         node.pruned = false;
-    
-        // If the current node has children, recursively call resetPrunedNodes on each child
         if (node.children) {
             node.children.forEach(child => resetPrunedNodes(child));
         }
     };
+    
     
 
     const handleAddChild = (parentId) => {
@@ -402,7 +418,7 @@ const GraphView = () => {
             }
             return null;
         };
-    
+        
         const parentNode = findParentNode(updatedTreeData);
     
         if (parentNode) {
@@ -415,7 +431,7 @@ const GraphView = () => {
                 pruned: false,
                 depth: depth,
             };
-            parentNode.name = null; // Set parent node's name to null
+            parentNode.name = null;
             parentNode.attributes = {};
             parentNode.attributes.alpha= '';
             parentNode.attributes.beta= '';
@@ -435,33 +451,27 @@ const GraphView = () => {
         const updatedTreeData = JSON.parse(JSON.stringify(treeData));
         // Find the parent node
         const findParentNodeByChildId = (childId, node) => {
-            // If the current node has children, check if any of its children match the childId
             if (node.children) {
                 for (let child of node.children) {
-                    // If the child's ID matches, return the current node as its parent
                     if (child.id === childId) {
                         return node;
                     }
-                    // Recursively search for the child node in the current node's children
                     const parentNode = findParentNodeByChildId(childId, child);
-                    // If the parent node is found, return it
                     if (parentNode) {
-                        console.log(updatedTreeData)
                         return parentNode;
                     }
                 }
             }
-            // If the child node is not found in the current subtree, return null
             return null;
         };
-        resetPrunedNodes(updatedTreeData)
-        const parentNode = findParentNodeByChildId(childId, updatedTreeData);
-        console.log(parentNode)
 
+        resetPrunedNodes(updatedTreeData)
+
+        const parentNode = findParentNodeByChildId(childId, updatedTreeData);
+
+        // Add children to parent's children
         if (parentNode || parentNode.children) {
-            // Find the index of the child node with the given ID
             const childIndex = parentNode.children.findIndex(child => child.id === childId);
-            // If the child node with the given ID is found, remove it from the children array
             if (childIndex !== -1) {
                 parentNode.children.splice(childIndex, 1);
             }
@@ -475,13 +485,12 @@ const GraphView = () => {
         setTreeData(updatedTreeData);
     }
     
-
-      
+    // Updating css for attribute pruned flag
     const getDynamicPathClass = ({source, target}) => {
     if (target && target.data && target.data.pruned) {
-        return "pruned-path"; // If the target node is pruned, return the class for pruned paths
+        return "pruned-path";
     } else {
-        return "normal-path"; // Otherwise, return the class for normal paths
+        return "normal-path";
     }
     };
 
@@ -561,10 +570,12 @@ const GraphView = () => {
             <div className="wrapper-tree" style={{height: '80vh', width: '80%'}}>
                 <Tree data={treeData} 
                 orientation="vertical"
+                translate= {intialStart}
                 rootNodeClassName="node__root"
                 branchNodeClassName="node__branch"
                 leafNodeClassName="node__leaf"
                 pathFunc="straight"
+                draggable
                 onNodeClick
                 pathClassFunc={getDynamicPathClass}
                 renderCustomNodeElement={(rd3tProps) =>
