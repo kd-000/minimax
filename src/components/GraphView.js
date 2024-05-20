@@ -435,7 +435,7 @@ const GraphView = () => {
             parentNode.attributes = {};
             parentNode.attributes.alpha= '';
             parentNode.attributes.beta= '';
-            parentNode.attributes.player = (depth % 2 === 0) ? 'max' : 'min';
+            parentNode.attributes.player = (parentNode.depth % 2 === 0) ? 'max' : 'min';
             parentNode.children = parentNode.children ? [...parentNode.children, childNode] : [childNode];
             
             // Update the treeData
