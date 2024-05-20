@@ -6,6 +6,11 @@
       "src": "github-mark.svg",
       "type": "image/svg",
       "sizes": "98x96"
+    },
+    {
+      "src": "forestgreysquare-circle-compressed.png",
+      "type": "image/png",
+      "sizes": "1600x1600"
     }
   ],
   "start_url": ".",
