@@ -5,6 +5,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    height: 100%;
 }
 
 .options-header {
@@ -16,21 +17,27 @@
 
 .inner-buttons {
     width: 20%;
-    margin-top: 20px;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    word-wrap: break-word;
+    overflow: hidden;
+    background-color: #DDD;
+    margin-right: 25px;
+    border-radius: 5px;
 }
 
 .attributes {
     margin-bottom: 30px;
-    background-color: #DDD;
+    /* background-color: #DDD; */
     padding: 20px;
     padding-right: 10px !important;
     border-radius: 10px;
-    margin-right: 25px;
-    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+    margin-top: 15px;
+    margin-left: 15px;
+    margin-right: 15px;
+    /* box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5); */
 }
 
 .buttons {
@@ -39,6 +46,8 @@
     justify-content: center;
     width: 100%;
     margin-bottom: 0px;
+    word-wrap: break-word;
+    overflow: hidden;
 }
 
 .in-node-buttons {
@@ -48,6 +57,8 @@
     padding-bottom: 5px;
     font-size: 15px;
     font-weight: 500;
+    word-wrap: break-word;
+    overflow: hidden;
 }
 
 .input-style {
@@ -67,9 +78,10 @@
   
 
 .wrapper-tree{
-    border: 3px darkgray solid;
+    border: 3px #DDD solid;
     float: right;
-    border-radius: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
 }
 
 .wrapper-tree > div > svg > g {
@@ -100,12 +112,19 @@
     padding-bottom: 20px;
 }
 
-.node__notpruned {
-    fill: rgb(67, 170, 139) !important;
+.node__notpruned_max {
+    fill: black;
+    stroke-width: 2;
 }
 
+.node__notpruned_min {
+    fill: white;
+    stroke-width: 2;
+}
+
+
 .node__root> circle {
-    fill: rgb(67, 170, 139) !important;
+    fill: rgb(67, 170, 139);
 }
 
 .node__branch > circle {
@@ -113,12 +132,12 @@
 }
 
 .node__leaf > circle {
-    fill: rgb(67, 170, 139) !important;
+    fill: rgb(67, 170, 139);
     r: 40;
 }
 
 .node__pruned {
-    fill: rgb(199, 0, 57) !important; 
+    fill: rgb(199, 0, 57); 
 }
 
 .pruned-path {
@@ -134,7 +153,7 @@
 
 .graph-buttons {
     appearance: none;
-    background-color: rgb(67, 170, 139);
+    background-color: #555;
     font-size: 20px;
     border: 1px solid rgba(27, 31, 35, .15);
     border-radius: 6px;
@@ -152,6 +171,8 @@
     margin: 10px;
     margin-right: 20px;
     padding: 12px;
+    word-wrap: break-word;
+    overflow: hidden;
   }
   
   .graph-buttons:focus:not(:focus-visible):not(.focus-visible) {
@@ -160,18 +181,18 @@
   }
   
   .graph-buttons:hover {
-    background-color: rgb(0, 117, 89);
+    background-color: #333;
   }
   
   .graph-buttons:focus {
-    box-shadow: rgba(46, 164, 79, .4) 0 0 0 3px;
+    box-shadow: #333 0 0 0 3px;
     outline: none;
   }
   
 
   .graph-buttons:active {
-    background-color: rgb(125, 226, 192);
-    color: black;
+    background-color: #333  ;
+    color: #AAA;
   }
 
 

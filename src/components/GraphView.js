@@ -8,6 +8,8 @@ const GraphView = () => {
 
     // <Tree>
     const intialStart = {x: 750, y:100};
+    const scale = {min: 0.5, max: 2}
+    const separation = {siblings: 1.25, nonSiblings: 1.5}
     const [treeData, setTreeData] = useState(
         {
             id: 0,
@@ -18,7 +20,7 @@ const GraphView = () => {
             attributes: {
                 alpha: '',
                 beta: '',
-                player: "max",
+                player: "Max",
             }
         }
     )
@@ -84,7 +86,7 @@ const GraphView = () => {
             if (currentDepth === depth || (currentDepth === 0 && depth === 0)) {
                 node.name = Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
             } else { //Otherwise add children and repeat
-                const nextPlayer = currentPlayer === "max" ? "min" : "max"; //Alternate player attribute
+                const nextPlayer = currentPlayer === "Max" ? "Min" : "Max"; //Alternate player attribute
                 node.name= null;
                 node.children = Array.from({ length: branch }, () => generateNode(currentDepth + 1, nextPlayer));
                 node.attributes = {
@@ -97,7 +99,7 @@ const GraphView = () => {
             return node;
         };
     
-        return generateNode(0, "max"); // Trigger
+        return generateNode(0, "Max"); // Trigger
     };
 
     // Button trigger
@@ -318,7 +320,7 @@ const GraphView = () => {
         <g>
             <circle
                 r={15}
-                className={nodeDatum.pruned ? "node__pruned" : "node__notpruned"}
+                className={nodeDatum.pruned ? "node__pruned" : nodeDatum.depth % 2 == 0 ? "node__notpruned_max" : "node__notpruned_min"}
                 onClick={() => handleNodeClick(nodeDatum.id)}
             ></circle>
             <foreignObject {...foreignObjectProps}>
@@ -435,7 +437,7 @@ const GraphView = () => {
             parentNode.attributes = {};
             parentNode.attributes.alpha= '';
             parentNode.attributes.beta= '';
-            parentNode.attributes.player = (parentNode.depth % 2 === 0) ? 'max' : 'min';
+            parentNode.attributes.player = (parentNode.depth % 2 === 0) ? 'Max' : 'Min';
             parentNode.children = parentNode.children ? [...parentNode.children, childNode] : [childNode];
             
             // Update the treeData
@@ -563,11 +565,11 @@ const GraphView = () => {
                         <button className="graph-buttons" onClick={handleAlphaBeta}>Alpha Beta Pruning</button>
                     </div>
                 </div>
-                {isPruned && <div style={{paddingLeft:'20px', paddingRight:'20px', paddingBottom:'20px', paddingTop:'0px !important', fontSize:'20px'}}>Your tree has had nodes pruned!</div>} 
+                {/* {isPruned && <div style={{paddingLeft:'20px', paddingRight:'20px', paddingBottom:'20px', paddingTop:'0px !important', fontSize:'20px'}}>Your tree has had nodes pruned!</div>}  */}
 
             </div>
 
-            <div className="wrapper-tree" style={{height: '80vh', width: '80%'}}>
+            <div className="wrapper-tree" style={{height: 'unset', width: '80%'}}>
                 <Tree data={treeData} 
                 orientation="vertical"
                 translate= {intialStart}
@@ -575,6 +577,8 @@ const GraphView = () => {
                 branchNodeClassName="node__branch"
                 leafNodeClassName="node__leaf"
                 pathFunc="straight"
+                scaleExtent={scale}
+                separation = {separation}
                 draggable
                 onNodeClick
                 pathClassFunc={getDynamicPathClass}
