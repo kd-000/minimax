@@ -146,6 +146,32 @@ const GraphView = () => {
         }
     };
 
+    const Negamax = (node, maximising) => {
+        // If a Leaf Node return the value
+        if (!node.children || node.children.length === 0) { 
+            return node.name;
+        }
+        
+        if (maximising) {
+            let maxValue = -101;
+            for (let child of node.children) {
+                const value = -Negamax(child, false);
+                maxValue = Math.max(maxValue, value);
+            }
+            node.name = maxValue;
+            return maxValue;
+        } else {
+            let minValue = 101;
+            for (let child of node.children) {
+                const value = -Negamax(child, true);
+                minValue = Math.min(minValue, value);
+            }
+            node.name = minValue;
+            return minValue;
+        }
+
+    }
+
     // Clean tree of values apart from leaf nodes
     const cleanNodeNames = (node) => {
         // If leaf node do nothing
@@ -264,6 +290,17 @@ const GraphView = () => {
         resetIsClicked(clonedTreeData);
         setTreeData(clonedTreeData);
     }
+
+        // Button trigger
+        const handleNegamax = () => {
+            setIsPruned(false)
+            const clonedTreeData = JSON.parse(JSON.stringify(treeData));
+            Negamax(clonedTreeData, true); 
+            updateAlphaBetaAttributes(clonedTreeData);
+            resetPrunedNodes(clonedTreeData)
+            resetIsClicked(clonedTreeData);
+            setTreeData(clonedTreeData);
+        }
 
     // Button trigger
     const handleAlphaBeta = () => {
@@ -562,6 +599,7 @@ const GraphView = () => {
                     <div className='buttons'>
                         <button className="graph-buttons" onClick={regenerateValues}>Regenerate Values</button> 
                         <button className="graph-buttons" onClick={handleMinimax}>Minimax</button>
+                        <button className="graph-buttons" onClick={handleNegamax}>Negamax</button>
                         <button className="graph-buttons" onClick={handleAlphaBeta}>Alpha Beta Pruning</button>
                     </div>
                 </div>
